@@ -40,14 +40,14 @@ class Build < ActiveRecord::Base
   after_create :push_add_event
 
   def start!
-    job_id = RubocopAnalysisStatusWorker.create build_id: self.id
-    self.update_attributes job_id: job_id
+    job_id = RubocopAnalysisStatusWorker.create build_id: id
+    update_attributes job_id: job_id
 
     job_id
   end
 
   def rebuild!
-    self.update_attributes aasm_state: :pending
+    update_attributes aasm_state: :pending
 
     push_pend_event
 
@@ -62,10 +62,10 @@ class Build < ActiveRecord::Base
     begin
       unless File.exist? repository_path
         FileUtils.mkdir_p repository_path
-        git_clone project.clone_url, repository_path, self.last_commit_id, project.ssh_private_key_path
+        git_clone project.clone_url, repository_path, last_commit_id, project.ssh_private_key_path
       end
 
-      self.build_items.destroy_all
+      build_items.destroy_all
 
       project.projects_analysis_configs.enabled.each do |projects_analysis_config|
         result = RubocopAnalyzer.new(repository_path, projects_analysis_config.analysis_config.cop_class, projects_analysis_config.full_config).run
@@ -82,7 +82,7 @@ class Build < ActiveRecord::Base
         build_item.passed = build_item.changed_files.blank?
         build_item.save
 
-        git_reset repository_path, self.last_commit_id
+        git_reset repository_path, last_commit_id
       end
 
       complete!
@@ -105,7 +105,7 @@ class Build < ActiveRecord::Base
   end
 
   def repository_path
-    Rails.root.join(project.repository_path, self.last_commit_id).to_s
+    Rails.root.join(project.repository_path, last_commit_id).to_s
   end
 
   def absolute_url
@@ -123,9 +123,9 @@ class Build < ActiveRecord::Base
   end
 
   def duration
-    return nil if self.started_at.nil? || self.finished_at.nil?
+    return nil if started_at.nil? || finished_at.nil?
 
-    @duration ||= self.finished_at - self.started_at
+    @duration ||= finished_at - started_at
   end
 
   def duration_to_words
@@ -135,7 +135,7 @@ class Build < ActiveRecord::Base
   end
 
   def self.build_from_bitbucket(json)
-    self.new do |build|
+    new do |build|
       build.branch = json['commits'].last['branch']
       build.last_commit_id = json['commits'].last['raw_node']
       build.author = json['commits'].last['author']
@@ -147,7 +147,7 @@ class Build < ActiveRecord::Base
   def self.build_from_github(json)
     commit = json['commits'].try(:last) || json['head_commit']
     if commit
-      self.new do |build|
+      new do |build|
         build.branch = json['ref'].gsub 'refs/heads/', ''
         build.last_commit_id = commit['id']
         build.author = commit['committer']['name']
@@ -194,7 +194,7 @@ class Build < ActiveRecord::Base
   end
 
   def pusher_trigger(event, params = {})
-    Pusher.trigger("private-project-#{project.id}", "build:#{event}", { id: self.id }.merge(params)) unless Rails.env.test?
+    Pusher.trigger("private-project-#{project.id}", "build:#{event}", { id: id }.merge(params)) unless Rails.env.test?
   end
 
   def send_notifications
@@ -208,15 +208,15 @@ class Build < ActiveRecord::Base
   end
 
   def send_email_notification
-    Resque.enqueue BuildFinishedEmailWorker, self.id
+    Resque.enqueue BuildFinishedEmailWorker, id
   end
 
   def send_hipchat_notification
-    Resque.enqueue HipchatNotificationWorker, self.id
+    Resque.enqueue HipchatNotificationWorker, id
   end
 
   def send_slack_notification
-    Resque.enqueue SlackNotificationWorker, self.id
+    Resque.enqueue SlackNotificationWorker, id
   end
 
   def set_started_at
@@ -224,6 +224,6 @@ class Build < ActiveRecord::Base
   end
 
   def set_success
-    self.update_attributes success: completed? && build_items.all?(&:passed?)
+    update_attributes success: completed? && build_items.all?(&:passed?)
   end
 end

@@ -12,7 +12,7 @@ class HipchatConfig < ActiveRecord::Base
   private
 
   def client
-    @client ||= HipChat::Client.new(self.auth_token)
+    @client ||= HipChat::Client.new(auth_token)
   end
 
   def color(build)

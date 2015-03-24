@@ -59,7 +59,7 @@ class User < ActiveRecord::Base
   end
 
   def email_verified?
-    self.email && self.email !~ TEMP_EMAIL_REGEX
+    email && email !~ TEMP_EMAIL_REGEX
   end
 
   def uid(provider)
@@ -103,17 +103,17 @@ class User < ActiveRecord::Base
   end
 
   def admin?
-    ADMIN_EMAILS.include? self.email
+    ADMIN_EMAILS.include? email
   end
 
   def avatar_url
-    Gravatar.new(self.email).image_url(secure: true)
+    Gravatar.new(email).image_url(secure: true)
   end
 
   private
 
   def create_membership
-    Invitation.pending.where(email: self.email).each do |invitation|
+    Invitation.pending.where(email: email).each do |invitation|
       invitation.project.memberships.create user: self, role: :member
       invitation.update_attributes invitee: self
     end

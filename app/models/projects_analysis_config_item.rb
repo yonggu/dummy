@@ -11,10 +11,10 @@ class ProjectsAnalysisConfigItem < ActiveRecord::Base
   private
 
     def normalize_value
-      if analysis_config_item.value.is_a?(Array) && !self.value.is_a?(Array)
-        self.value = self.value.split(",")
+      if analysis_config_item.value.is_a?(Array) && !value.is_a?(Array)
+        self.value = value.split(",")
       elsif [TrueClass, FalseClass].include?(analysis_config_item.value.class)
-        self.value == 'true'
+        value == 'true'
       end
 
       true

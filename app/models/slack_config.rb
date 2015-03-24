@@ -11,7 +11,7 @@ class SlackConfig < ActiveRecord::Base
   private
 
   def notifier
-    @notifier ||= Slack::Notifier.new self.webhook_url
+    @notifier ||= Slack::Notifier.new webhook_url
   end
 
   def message(build)

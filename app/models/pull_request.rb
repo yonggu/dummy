@@ -9,7 +9,7 @@ class PullRequest < ActiveRecord::Base
   validate :validate_project_is_pushable_for_user, on: :create
 
   def submit
-    if self.push_directly
+    if push_directly
       push_to_remote
     else
       send_pull_request
@@ -57,7 +57,7 @@ class PullRequest < ActiveRecord::Base
     RubocopAnalyzer.new(build.repository_path, build_item.analysis_config.cop_class, build_item.projects_analysis_config.full_config).run
     output = git_push build.repository_path, commit_id: build.last_commit_id, base_branch: build.branch, commit_message: commit_message
     unless output[:success]
-      self.errors.add :base, 'Can not push to remote'
+      errors.add :base, 'Can not push to remote'
     end
   end
 
@@ -69,13 +69,13 @@ class PullRequest < ActiveRecord::Base
     if output[:success]
       build.project.send_pull_request(self)
     else
-      self.errors.add :base, 'Can not push to remote'
+      errors.add :base, 'Can not push to remote'
     end
   end
 
   def validate_project_is_pushable_for_user
     unless build.project.pushable_for?(user)
-      self.errors.set :base, build.project.errors[:base]
+      errors.set :base, build.project.errors[:base]
     end
   end
 end

@@ -10,7 +10,7 @@ class AnalysisConfig < ActiveRecord::Base
   end
 
   def cop_class
-    @cop_class ||= $cops_hash[self.name]
+    @cop_class ||= $cops_hash[name]
   end
 
   def self.latest_version

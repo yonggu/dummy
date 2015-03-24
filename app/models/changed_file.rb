@@ -9,9 +9,9 @@ class ChangedFile < ActiveRecord::Base
   end
 
   def diff_lines
-    return [] if self.diff.blank?
+    return [] if diff.blank?
 
-    @diff_lines ||= Gitlab::Diff::Parser.new.parse(self.diff.lines)
+    @diff_lines ||= Gitlab::Diff::Parser.new.parse(diff.lines)
   end
 
   def lines
@@ -27,7 +27,7 @@ class ChangedFile < ActiveRecord::Base
   private
 
   def data
-    @data ||= File.read(self.absolute_path)
+    @data ||= File.read(absolute_path)
   end
 
   def html_escape(str)

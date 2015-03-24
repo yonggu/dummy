@@ -17,7 +17,7 @@ class Invitation < ActiveRecord::Base
   private
 
   def create_membership
-    recipient = User.find_by(email: self.email)
+    recipient = User.find_by(email: email)
 
     if recipient
       project.memberships.create user: recipient, role: :member
@@ -25,7 +25,7 @@ class Invitation < ActiveRecord::Base
   end
 
   def send_new_invitation_email
-    Resque.enqueue NewInvitationEmailWorker, self.id
+    Resque.enqueue NewInvitationEmailWorker, id
   end
 
   def set_token

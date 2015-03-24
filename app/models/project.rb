@@ -70,7 +70,7 @@ class Project < ActiveRecord::Base
   end
 
   def repository_path
-    Rails.root.join(REPOSITORIES, self.name)
+    Rails.root.join(REPOSITORIES, name)
   end
 
   def check_and_send_notifications(users, msg, color)
@@ -118,8 +118,8 @@ class Project < ActiveRecord::Base
     }
 
     hash['AllCops'] = {
-      'Include' => self.included_files,
-      'Exclude' => self.excluded_files
+      'Include' => included_files,
+      'Exclude' => excluded_files
     }
 
     hash
@@ -162,7 +162,7 @@ class Project < ActiveRecord::Base
   end
 
   def owner=(user)
-    self.memberships.build user: user, role: :owner
+    memberships.build user: user, role: :owner
   end
 
   def support_oauth_cloning?
@@ -174,7 +174,7 @@ class Project < ActiveRecord::Base
   end
 
   def generate_ssh_public_key
-    ssh_key = SSHKey.generate(comment: "Awesome Code/#{self.name}")
+    ssh_key = SSHKey.generate(comment: "Awesome Code/#{name}")
 
     write_to_file ssh_private_key_filename, ssh_key.private_key
     write_to_file ssh_public_key_filename, ssh_key.ssh_public_key, 0644
@@ -217,7 +217,7 @@ class Project < ActiveRecord::Base
   end
 
   def hook_url
-    @hook_url ||= Figaro.env.hook_url.sub 'project_id', self.id.to_s
+    @hook_url ||= Figaro.env.hook_url.sub 'project_id', id.to_s
   end
 
   def ssh_url
@@ -234,18 +234,18 @@ class Project < ActiveRecord::Base
     return true unless AnalysisConfig.latest_version
 
     config = YAML.load_file(Rails.root.join('config', 'rubocop', AnalysisConfig.latest_version, 'default.yml'))
-    self.assign_attributes included_files: config['AllCops']['Include'], excluded_files: config['AllCops']['Exclude']
+    assign_attributes included_files: config['AllCops']['Include'], excluded_files: config['AllCops']['Exclude']
 
-    self.save
+    save
   end
 
   def normalize_included_files_and_excluded_files
-    if self.included_files && !self.included_files.is_a?(Array)
-      self.included_files = self.included_files.split(",")
+    if included_files && !included_files.is_a?(Array)
+      self.included_files = included_files.split(",")
     end
 
-    if self.excluded_files && !self.excluded_files.is_a?(Array)
-      self.excluded_files = self.excluded_files.split(",")
+    if excluded_files && !excluded_files.is_a?(Array)
+      self.excluded_files = excluded_files.split(",")
     end
   end
 
@@ -277,7 +277,7 @@ class Project < ActiveRecord::Base
   end
 
   def ssh_key_prefix
-    "csg-#{self.id}"
+    "csg-#{id}"
   end
 
   def write_to_file(filename, content, perm = 0600)

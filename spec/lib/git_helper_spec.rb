@@ -12,7 +12,7 @@ describe GitHelper do
 
     it 'runs the command' do
       expect(self).to receive(:`).with command
-      self.send :run_command, command
+      send :run_command, command
     end
 
     context 'when it raises exception' do
@@ -24,7 +24,7 @@ describe GitHelper do
 
       it 'sends error to Rollbar' do
         expect(Rollbar).to receive(:error).with(exception, command: 'ls')
-        self.send :run_command, command
+        send :run_command, command
       end
     end
   end

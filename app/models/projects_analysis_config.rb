@@ -21,7 +21,7 @@ class  ProjectsAnalysisConfig < ActiveRecord::Base
   end
 
   def config
-    { self.analysis_config.name => configs }
+    { analysis_config.name => configs }
   end
 
   def configs
