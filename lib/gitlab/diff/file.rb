@@ -4,7 +4,7 @@ module Gitlab
       attr_reader :diff
 
       delegate :new_file, :deleted_file, :renamed_file,
-        :old_path, :new_path, to: :diff, prefix: false
+               :old_path, :new_path, to: :diff, prefix: false
 
       def initialize(diff)
         @diff = diff
