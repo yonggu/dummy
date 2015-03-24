@@ -1,5 +1,0 @@
-li.project
-  = simple_form_for project, url: bitbucket_projects_path do |f|
-    = f.input :name, as: :hidden, input_html: { name: 'project[name]' }
-    = f.input :private, as: :hidden, input_html: { name: 'project[private]' }
-    = f.submit project.name, class: 'project_name'

@@ -1,136 +1,91 @@
-# Awesome Code
+# simple_paginate
 
-[ ![Codeship Status for
-xinminlabs/awesomecode.io](https://codeship.com/projects/4dd93ee0-8870-0132-512f-523596b2e83f/status?branch=master)](https://codeship.com/projects/59433)
+[![Build Status](https://travis-ci.org/xinminlabs/simple_paginate.png)](https://travis-ci.org/xinminlabs/simple_paginate)
 
-[ ![AwesomeCode Status for
-xinminlabs/awesomecode.io](https://awesomecode.io/projects/1/status)](https://awesomecode.io/projects/1)
+Simple pagination solution for previous and next page navigation.
 
-## Requirements
+## Why simple_paginate
 
-*  Ruby 2.1.3
-*  Rails 4.1.4+
-*  Redis
-*  MySQL
+We saw some websites using `will_paginate` or `kaminari` for pagination, but they just need previous and next page navigation, `will_paginate` or `kaminari` is overqualified.
 
-## Setup
+Pagination in databae sometimes is slow because
 
-### Prerequisites
+1. it sends a sql with OFFSET to get collection
+2. it sends additional sql with COUNT to get total number of record.
 
-#### Installing git-flow
+`simple_paginate` eliminates the additional COUNT sql, make your pagination faster.
 
-OSX (use Homebrew)
+## How simple_paginate works
+
+`will_paginate` and `kaminari` uses `page` and `per_page` to calculate offset and limit, then send 2 sqls
 
 ```
-brew install git-flow
+SELECT * FROM posts OFFSET 20 LIMIT 10;
+SELECT COUNT(*) FROM posts;
 ```
 
-Linux (Ubuntu or Debian)
-```
-apt-get install git-flow
-```
+after getting total count, they can calculate total pages, then render page numbers, prev, next, first and last page links.
 
-see more information on [installation](https://github.com/nvie/gitflow/wiki/Installation)
-
-### Install
+`simple_paginate` also uses `page` and `per_page` to calculate offset and limit, but it only sends 1 sql
 
 ```
-git clone git@github.com:xinminlabs/awesomecode.io.git
-cd awesomecode.io
-bundle install
-rake bower:install
+SELECT * FROM posts OFFSET 20 LIMIT 11;
 ```
 
-### Copy Config Files
+it fetches one more record (11 = 10 + 1) to calculate if there is a next page records, so it doesn't need to send COUNT sql.
+
+## Usage
+
+### Query Basics
 
 ```
-cp config/database.yml.example config/database.yml # change it
-cp config/secrets.yml.example config/secrets.yml # change it
-cp config/redis.yml.example config/redis.yml # change it
-cp config/application.yml.example config/application.yml # change it
-cp config/email.yml.example config/email.yml # change it
+## perform a paginate query:
+@users = User.paginate(:page => params[:page])
+
+# or, use page and per scope:
+@users = User.page(params[:page]).per(25)
 ```
 
-### Set hook_url and domain_url in application.yml
-
-1. Get your own ngork url from administrator, development.ngrok.com for example.
-2. Replace hook_url with http://development.ngrok.com/projects/project_id/builds.
-3. Replace domain_url with http://development.ngrok.com
-
-### Setup ngrok
-
-[ngrok](https://ngrok.com/usage) lets you expose a locally running web service to the internet.
-
-Start ngrok with your own ngrok url.
+### Helpers 
 
 ```
-ngrok -hostname development.ngrok.com
+## render previous page link:
+<%= link_to_previous_page @users, 'Previous' %>
+
+## render next page link:
+<%= link_to_next_page @users, 'Next' %>
+
+## render previous page link and next page link
+<%= simple_paginate @users
 ```
 
-```
-ngork
-Tunnel Status                 online
-Version                       1.7/1.6
-Forwarding                    http://development.ngrok.com -> 127.0.0.1:3000
-Forwarding                    https://development.ngrok.com -> 127.0.0.1:3000
-Web Interface                 127.0.0.1:4040
-# Conn                        0
-Avg Conn Time                 0.00ms
-```
+### General configuration options
 
-When you run ngrok, it will display a UI in your terminal with the current status of the tunnel. This includes the public URL it has allocated to you which will forward to your local web service: https://development.ngrok.com -> 127.0.0.1:3000.
-
-### Checkout develop branch
+You can configure the following default values by overriding these values using SimplePaginate.configure method.
 
 ```
-git checkout -b develop origin/develop
+default_per_page    # 25 by default
 ```
 
-### Setup Database
+There's a handy generator that generates the default configuration file into config/initializers directory. Run the following generator command, then edit the generated file.
 
 ```
-bundle exec rake db:create
-bundle exec rake db:migrate
-bundle exec rake rubocop:sync
+% rails g simple_paginate:config
 ```
 
-### Start Server
+### Customizing the pagination helper
+
+SimplePaginate includes a handy template generator, To edit your paginator, run the generator first:
 
 ```
-bundle exec guard
+% rails g simple_paginate:views 
 ```
 
-## Deployment
+### Contribute
+
+To run the test suite locally:
 
 ```
-bundle exec cap production deploy
+% bundle install
+% rake spec:active_record_42
 ```
-
-## Additional
-
-### Add hooks on Bitbucket/Github manually
-
-Normally it will add hooks on Bibutcket/Github automatically, but when you have to do it manually, here is how:
-
-* [POST hook management](https://confluence.atlassian.com/display/BITBUCKET/POST+hook+management)
-* [Creating Webhooks](https://developer.github.com/webhooks/creating/)
-
-Take coding_style_guide for example(This assume you have already imported projects from bitbucket and have a project with id:
-
-1. Visit https://bitbucket.org/xinminlabs/coding_style_guide/admin/hooks.
-2. Find the select box with text 'Select a hook'. Select POST and click 'Add hook' button.
-3. Fill in the 'URL' with https://development.ngrok.com/projects/5/builds (It is the hook_url in the application.yml and its project_id is replaced with the real project id.)
-4. Create a test branch and push to remote to see whether you local server receives the commit data from Bitbucket.
-
-### Some guidelines
-
-1.  Do not push code to master branch directly.
-2.  Try not to push code to develop branch directly unless it is urgent or get approved.
-3.  Use a seperate feature branch to work on your own feature and create a pull request after your pushed your feature branch to remote.
-
-## How to upgrade ruby
-
-1. update on codeship.io
-2. update on linode-ops
-3. update .ruby-version
-4. update cap config

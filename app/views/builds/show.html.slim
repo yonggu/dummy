@@ -1,6 +1,0 @@
-= render 'projects/header'
-
-= render 'projects/builds', builds: [@build]
-
-.build_items
-  = render partial: 'build_item', collection: @build.sorted_build_items

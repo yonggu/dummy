@@ -4,6 +4,6 @@
 -#   per_page:     number of items to fetch per page
 -#   paginator:    the paginator that renders the pagination tags inside
 = paginator.render do
-  .pager
+  .simple_paginate
     = prev_page_tag unless current_page.first? 
     = next_page_tag unless current_page.last?
