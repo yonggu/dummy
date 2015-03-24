@@ -1,0 +1,40 @@
+.build_items {
+  margin-top: 40px;
+}
+
+.projects_analysis_config_panel {
+  .panel-heading {
+    padding: 0px;
+
+    .row {
+      padding: 10px 15px;
+    }
+
+    .label {
+      font-size: 100%;
+      margin-top: 5px;
+    }
+  }
+  .panel-title {
+    line-height: 30px;
+  }
+}
+
+div[data-toggle] {
+  &:hover {
+    cursor: pointer;
+    color: #428bca;
+  }
+}
+
+.build-item-actions {
+  text-align: right;
+  position: relative;
+  a {
+    display: block;
+    height: 30px;
+  }
+  .octicon {
+    padding-right: 5px;
+  }
+}

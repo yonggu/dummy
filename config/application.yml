@@ -1,0 +1,48 @@
+development:
+  bitbucket_key: x7DCrdrHsMaUNGWVFj
+  bitbucket_secret: nMjnaZNrvXen3agBfs8mxJFdEKLVMK6D
+
+  github_key: f047b3c54c88fb1c6ca5
+  github_secret: ec95e6e83d6da4d25ff97de181c51d2a4d645850
+
+  domain_url: https://awesomecode.io/
+  hook_url: https://yong-csg.xinminlabs.com/projects/project_id/builds
+
+  rollbar_access_token: cce250be49024252919bb50a0d4d5f5a
+
+  pusher_app_id: 111749
+  pusher_key: 8d20efa7acbd9c094e90
+  pusher_secret: 40a102b1410a0de97edd
+
+test:
+  bitbucket_key: BsR88akZzHsSRDcCaG
+  bitbucket_secret: JKdUCrjkQHB3zP6tCrSWqHfPk9wXBB7M
+
+  github_key: 3e2fb2a43e15aeca55b4
+  github_secret: c262596b11731ed0b37b62e1ed9632e844ad1811
+
+  domain_url: http://yong-csg.awesomecode.io
+  hook_url: http://yong-csg.awesomecode.io/projects/project_id/builds
+
+  rollbar_access_token: cce250be49024252919bb50a0d4d5f5a
+
+  pusher_app_id: 111749
+  pusher_key: 8d20efa7acbd9c094e90
+  pusher_secret: 40a102b1410a0de97edd
+
+production:
+  bitbucket_key: x7DCrdrHsMaUNGWVFj
+  bitbucket_secret: nMjnaZNrvXen3agBfs8mxJFdEKLVMK6D
+
+  github_key: f047b3c54c88fb1c6ca5
+  github_secret: ec95e6e83d6da4d25ff97de181c51d2a4d645850
+
+  domain_url: https://awesomecode.io/
+  hook_url: https://yong-csg.xinminlabs.com/projects/project_id/builds
+
+  rollbar_access_token: cce250be49024252919bb50a0d4d5f5a
+
+  pusher_app_id: 111749
+  pusher_key: 8d20efa7acbd9c094e90
+  pusher_secret: 40a102b1410a0de97edd
+

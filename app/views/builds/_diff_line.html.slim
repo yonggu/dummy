@@ -1,0 +1,10 @@
+tr.line_holder class="#{diff_line.type}"
+  - if diff_line.type == 'match'
+    td.diff-line-num.old_line ...
+    td.diff-line-num.new_line ...
+    td.line_content.matched = diff_line.text
+  - else
+    td.old_line= diff_line.type == 'new' ? '&nbsp;'.html_safe : diff_line.old_pos
+    td.new_line= diff_line.type == 'old' ? '&nbsp;'.html_safe : diff_line.new_pos
+    td.line_content class="#{diff_line.type}"
+      = diff_line.text.html_safe

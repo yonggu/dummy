@@ -1,0 +1,47 @@
+div
+  br
+  .panel-group
+    .panel.panel-default
+      .panel-heading
+        h4.panel-title Global Configuration
+      .panel-collapse
+        .panel-body
+          = simple_form_for @project.becomes(Project), remote: true, html: { class: 'form-horizontal' }, wrapper: :horizontal_form do |f|
+            = f.input :included_files, as: :string, input_html: { 'data-role' => 'tagsinput', value: @project.included_files.join(",") }
+            = f.input :excluded_files, as: :string, input_html: { 'data-role' => 'tagsinput', value: @project.excluded_files.join(",") }
+            .col-sm-3
+              = f.submit 'Save', class: 'btn btn-primary', 'data-loading-text' => 'Saving...'
+  .panel-group#accordion
+    - @project.grouped_projects_analysis_configs.each do |category, projects_analysis_configs|
+      .panel.panel-default
+        .panel-heading data-toggle='collapse' data-parent='#accordion' href="##{category.underscore}"
+          h4.panel-title= category
+        .panel-collapse.collapse id="#{category.underscore}"
+          .panel-body
+            - projects_analysis_configs.each do |projects_analysis_config|
+              .panel.panel-default.projects_analysis_config_panel
+                .panel-heading data-toggle='collapse' href="##{dom_id(projects_analysis_config)}"
+                    .row
+                      .col-sm-10
+                        .panel-title
+                          = projects_analysis_config.analysis_config.name
+                      .col-sm-2
+                        .pull-right
+                          = simple_form_for projects_analysis_config, url: toggle_projects_analysis_config_path(projects_analysis_config) do |f|
+                            = f.check_box :enabled
+                .panel-collapse.collapse id="#{dom_id(projects_analysis_config)}"
+                  .panel-body
+                    p = projects_analysis_config.analysis_config.description
+                    - if projects_analysis_config.analysis_config.guide
+                      p = link_to 'Guide', projects_analysis_config.analysis_config.guide, target: '_blank'
+                    = simple_form_for projects_analysis_config, remote: true, html: { class: 'edit_projects_analysis_config form-horizontal' } do |f|
+                      - projects_analysis_config.projects_analysis_config_items.each do |projects_analysis_config_item|
+                        .form-group
+                          label.col-sm-4= projects_analysis_config_item.analysis_config_item.name
+                          .col-sm-8
+                            = hidden_field_tag "projects_analysis_config[projects_analysis_config_items_attributes][#{projects_analysis_config_item.id}][id]", projects_analysis_config_item.id
+                            = render_projects_analysis_config_item_field projects_analysis_config_item
+                      - if projects_analysis_config.projects_analysis_config_items.present?
+                        .form-group
+                          .col-sm-4
+                            = f.submit 'Save', class: 'btn btn-primary', 'data-loading-text' => 'Saving...'

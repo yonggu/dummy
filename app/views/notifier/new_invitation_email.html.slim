@@ -1,0 +1,8 @@
+p Hi,
+
+p #{@sender.email} invited you to join project #{@project.name} on the Awesome Code.
+
+- if @recipient
+  p Get started with #{@project.name}: #{project_url(@project)}
+- else
+  p Just follow this link to jump abord the ship: #{project_url(@project, invitation_token: @invitation.token)}

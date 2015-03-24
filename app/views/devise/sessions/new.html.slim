@@ -1,0 +1,25 @@
+.form-box.center-block
+  header
+    h3 Sign in
+  section
+    = simple_form_for resource, as: resource_name, url: session_path(resource_name), html: { class: 'form-horizontal' },
+      wrapper: :horizontal_form, wrapper_mappings: { boolean: :horizontal_boolean } do |f|
+      .form-inputs
+        = f.input :email, required: true, autofocus: true
+        = f.input :password, required: true
+        = f.input :remember_me, as: :boolean if devise_mapping.rememberable?
+      .form-actions
+        .col-sm-offset-3
+          = f.button :submit, "Sign In", class: 'btn btn-primary'
+          = link_to "Forgot your password?", new_password_path(resource_name), class: 'forgot-password'
+          = link_to "Need an account? Sign up free.", sign_up_path, class: 'sign-up'
+    .social-logins
+      ul.center-block.clearfix
+        li.sign-in-with-github
+          a href='/auth/github'
+            = image_tag 'github-32.jpg'
+            span Sign in with Github
+        li.sign-in-with-bitbucket
+          a href='/auth/bitbucket'
+            = image_tag 'bitbucket-32.jpg'
+            span Sign in with Bitbucket

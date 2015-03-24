@@ -1,0 +1,20 @@
+.form-group
+  label.col-sm-3.control-label for='markdown' Copy Markdown Syntax:
+  .col-sm-9.input-group
+    input id='markdown' class='form-control' name='markdown' readonly='readonly' type='text' value="#{project_status_markdown(@project)}"
+    span.input-group-addon.copy-button data-clipboard-text="#{project_status_markdown(@project)}"
+      span.glyphicon.glyphicon-link
+
+.form-group
+  label.col-sm-3.control-label for='textile' Copy Textile Syntax:
+  .col-sm-9.input-group
+    input id='textile' class='form-control' name='textile' readonly='readonly' type='text' value="#{project_status_textile(@project)}"
+    span.input-group-addon.copy-button data-clipboard-text="#{project_status_textile(@project)}"
+      span.glyphicon.glyphicon-link
+
+.form-group
+  label.col-sm-3.control-label for='rdoc' Copy Rdoc Syntax:
+  .col-sm-9.input-group
+    input id='rdoc' class='form-control' name='rdoc' readonly='readonly' type='text' value="#{project_status_rdoc(@project)}"
+    span.input-group-addon.copy-button data-clipboard-text="#{project_status_rdoc(@project)}"
+      span.glyphicon.glyphicon-link

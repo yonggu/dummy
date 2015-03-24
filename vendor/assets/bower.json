@@ -1,0 +1,19 @@
+{
+  "name": "dsl-generated dependencies",
+  "dependencies": {
+    "jquery": "2.1.1",
+    "jquery-ujs": "latest",
+    "bootstrap": "3.3.0",
+    "bootstrap-switch": "3.1.0",
+    "bootstrap-tagsinput": "0.4.2",
+    "octicons": "latest",
+    "toastr": "2.1.0",
+    "is-loading": "1.0.6",
+    "list.js": "1.1.1",
+    "zeroclipboard": "2.2.0",
+    "pusher": "2.2.4",
+    "handlebars": "3.0.0",
+    "gravatarjs": "1.0.0",
+    "moment": "2.9.0"
+  }
+}

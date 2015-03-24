@@ -1,0 +1,10 @@
+.diff-file
+  .diff-header
+    span= changed_file.path
+  .diff-content
+    table.text-file
+      tbody
+        - if changed_file.diff.present?
+          = render partial: 'builds/diff_line', collection: changed_file.diff_lines
+        - else
+          = render partial: 'builds/line', collection: changed_file.lines, locals: { offense_line_numbers: changed_file.offense_line_numbers }

@@ -1,0 +1,129 @@
+#project-container {
+  display: block;
+  border-radius: 4px;
+  background: #FAFBFC;
+  padding: 20px;
+  border: 1px solid #CEDBED;
+  box-shadow: 0 3px 0 #CEDBED;
+
+  .project-list {
+    list-style: none;
+    padding: 0px;
+
+    .project {
+      padding: 0px;
+      color: #5A95E5;
+
+      button[type='submit'] {
+        background: none;
+        cursor: pointer;
+        border: none;
+        border-bottom: 1px solid #CEDBED;
+        line-height: 40px;
+        width: 100%;
+        text-align: left;
+      }
+
+      &:hover {
+        background: #5A95E5;
+        color: #fff;
+      }
+    }
+  }
+}
+
+.project-header {
+  padding: 20px;
+  margin-bottom: 40px;
+  background-color: #F2F4F7;
+  border-bottom: 1px solid #CEDBED;
+  i {
+    margin-right: 5px;
+    color: #5A95E5;
+  }
+  a {
+    color: #5A95E5;
+    font-size: 18px;
+  }
+}
+
+.wizard-bar {
+  margin-bottom: 15px;
+  height: 94px;
+  border: 1px solid #CEDBED;
+  border-radius: 4px;
+  margin-top: 0;
+  padding: 0;
+  list-style: none;
+  vertical-align: top;
+
+  .wizard {
+    height: 94px;
+    text-align: center;
+    color: #7F8994;
+
+    &.active {
+      color: #60CC69;
+
+      .icon {
+        background: #60CC69;
+      }
+    }
+  }
+
+  .icon {
+    height: 15px;
+    width: 15px;
+    margin: 28px auto 9px;
+    display: block;
+    border-radius: 50%;
+    background: #7F8994;
+  }
+}
+
+.choose-repository {
+  background: #FAFBFC;
+  border: 1px solid #CEDBED;
+  border-radius: 4px;
+  padding: 80px 0;
+
+  .repository-provider {
+    text-align: center;
+  }
+}
+
+.projects_analysis_config_panel {
+  position: relative;
+}
+
+.notifications, .status-images {
+  background-color: #FAFBFC;
+  border: 1px solid #CEDBED;
+  margin: 20px 0;
+
+  .form-actions {
+    padding: 10px 0 20px;
+  }
+}
+
+.notification {
+  padding: 25px 20px;
+  border-bottom: 1px solid #CEDBED;
+  overflow: hidden;
+  .logo {
+    border-radius: 4px;
+    background-color: #fff;
+    border: 1px solid #CEDBED;
+    margin-right: 20px;
+  }
+  .setting {
+    width: 500px;
+  }
+  h4 {
+    margin-bottom: 20px;
+  }
+}
+
+.status-images {
+  padding: 20px;
+}

@@ -1,0 +1,10 @@
+#projects
+  .input-group
+    span.input-group-addon
+      span.glyphicon.glyphicon-search
+    input#project-filter.form-control.search type='text' placeholder='Search Repositories...'
+
+  hr
+
+  ul.project-list.list
+    = render partial: 'project', collection: projects

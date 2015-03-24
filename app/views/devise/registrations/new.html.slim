@@ -1,0 +1,25 @@
+.form-box.center-block
+  header
+    h3 Sign up
+  section
+    = simple_form_for resource, as: resource_name, url: registration_path(resource_name), html: { class: 'form-horizontal' },
+      wrapper: :horizontal_form do |f|
+      .form-inputs
+        = f.input :name, required: true, autofocus: true
+        = f.input :email, required: true
+        = f.input :password, required: true, hint: ("#{@minimum_password_length} characters minimum" if @validatable)
+        = f.input :password_confirmation, required: true
+      .form-actions
+        .col-sm-offset-3
+          = f.button :submit, "Sign Up", class: 'btn btn-primary'
+          = link_to 'Already have an account? Sign in.', sign_in_path, class: 'sign-in'
+    .social-logins
+      ul.center-block.clearfix
+        li.sign-up-with-github
+          a href='/auth/github'
+            = image_tag 'github-32.jpg'
+            span Sign up with Github
+        li.sign-up-with-bitbucket
+          a href='/auth/bitbucket'
+            = image_tag 'bitbucket-32.jpg'
+            span Sign up with Bitbucket

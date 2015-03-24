@@ -1,56 +1,91 @@
 Rails.application.routes.draw do
-  # The priority is based upon order of creation: first created -> highest priority.
-  # See how all your routes lay out with "rake routes".
+  mount RailsAdmin::Engine => '/admin', as: 'rails_admin'
+  devise_for :users, :controllers => { :registrations => "registrations" }
 
-  # You can have the root of your site routed with "root"
-  # root 'welcome#index'
+  devise_scope :user do
+    get :sign_in, to: 'devise/sessions#new', as: :sign_in
+    get :sign_up, to: 'devise/registrations#new', as: :sign_up
+    delete :sign_out, to: 'devise/sessions#destroy', as: :sign_out
+  end
 
-  # Example of regular route:
-  #   get 'products/:id' => 'catalog#view'
+  match '/auth/:provider/callback', to: 'omniauth_callbacks#create', via: [:get, :post], as: :login
+  match '/auth/failure', to: 'omniauth_callbacks#failure', via: :get
+  get '/users/:id/add_email', to: 'users#add_email', as: :add_email
+  patch '/users/:id/finish_signup', to: 'users#finish_signup', as: :finish_signup
 
-  # Example of named route that can be invoked with purchase_url(id: product.id)
-  #   get 'products/:id/purchase' => 'catalog#purchase', as: :purchase
+  require 'admin_constraint'
+  require 'resque/server'
+  mount Resque::Server => "/resque", constraints: AdminConstraint.new
 
-  # Example resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
+  resources :projects do
+    collection do
+      get :setup_scm
+    end
+    member do
+      get :status
+    end
 
-  # Example resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
+    resources :builds, except: %i(index) do
+      member do
+        put :rebuild
+        put :stop
+      end
+    end
+    resource :hipchat_config
+    resource :slack_config
 
-  # Example resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
+    collection do
+      post :github_sync
+      post :bitbucket_sync
+    end
 
-  # Example resource route with more complex sub-resources:
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', on: :collection
-  #     end
-  #   end
+    member do
+      put :activate
+      put :deactivate
+    end
 
-  # Example resource route with concerns:
-  #   concern :toggleable do
-  #     post 'toggle'
-  #   end
-  #   resources :posts, concerns: :toggleable
-  #   resources :photos, concerns: :toggleable
+    resources :memberships, only: %i(destroy)
+    resources :invitations, only: %i(create)
+  end
+  resources :github_projects do
+    collection do
+      get :setup_scm
+      get :import
+    end
+  end
+  resources :bitbucket_projects do
+    collection do
+      get :setup_scm
+      get :import
+    end
+  end
 
-  # Example resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
+  resources :users
+
+  resources :projects_analysis_configs do
+    member do
+      put :toggle
+    end
+  end
+
+  resources :build_items do
+    resources :pull_requests
+  end
+
+  resources :omniauth_callbacks, only: %i(create destroy failure)
+  resources :jobs, only: %i(show)
+
+  resources :pusher do
+    collection do
+      post :auth
+    end
+  end
+
+  authenticated :user do
+    root 'projects#index', as: :root
+  end
+
+  unauthenticated :user do
+    root 'welcome#index', as: :unauthenticated_root
+  end
 end

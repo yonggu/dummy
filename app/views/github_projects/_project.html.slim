@@ -1,0 +1,5 @@
+li.project
+  = simple_form_for project, url: github_projects_path do |f|
+    = f.input :name, as: :hidden, input_html: { name: 'project[name]' }
+    = f.input :private, as: :hidden, input_html: { name: 'project[private]' }
+    = button_tag project.name, class: 'project_name'

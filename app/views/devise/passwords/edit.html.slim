@@ -1,0 +1,14 @@
+.form-box.center-box
+  header
+    h3 Change my password
+  section
+    = simple_form_for resource, as: resource_name, url: password_path(resource_name), html: { method: :put, class: 'form-horizontal' },
+      wrapper: :horizontal_form do |f|
+      = f.input :reset_password_token, as: :hidden
+      = f.full_error :reset_password_token
+      .form-inputs
+        = f.input :password, required: true, autofocus: true
+        = f.input :password_confirmation, required: true
+      .form-actions
+        .col-sm-offset-3
+          = f.button :submit, "Change my password", class: 'btn btn-primary'

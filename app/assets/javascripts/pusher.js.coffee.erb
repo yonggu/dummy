@@ -1,0 +1,134 @@
+if projectIds?.length > 0
+  pusher = new Pusher "<%= Pusher.key %>", { authEndpoint: '/pusher/auth' }
+
+  for projectId in projectIds
+    channel = pusher.subscribe "private-project-#{projectId}"
+
+    channel.bind 'pull_request:complete', (data) ->
+      toastr.info(data.message)
+      $('.build-item-actions', "#build_item_#{data.build_item_id}").isLoading('hide')
+
+    channel.bind 'pull_request:fail', (data) ->
+      toastr.error(data.message)
+      $('.build-item-actions', "#build_item_#{data.build_item_id}").isLoading('hide')
+
+    channel.bind 'build:add', (data) ->
+      toastr.info(data.message)
+      $("ul.builds .build").last().remove()
+      if $('.build_items').length == 0
+        prependBuild(data.build)
+
+    channel.bind 'build:pend', (data) ->
+      toastr.info(data.message)
+      renderBuild(data.build)
+
+    channel.bind 'build:start', (data) ->
+      toastr.info(data.message)
+      renderBuild(data.build)
+
+    channel.bind 'build:complete', (data) ->
+      toastr.success(data.message)
+      renderBuild(data.build)
+
+    channel.bind 'build:fail', (data) ->
+      toastr.error(data.message)
+      renderBuild(data.build)
+
+    channel.bind 'build:stop', (data) ->
+      toastr.warning(data.message)
+      renderBuild(data.build)
+
+  source = $('#build-template').html()
+  template = Handlebars.compile(source)
+
+  renderBuild = (build) ->
+    html = template(build: build)
+
+    $("#build_#{build.id}").replaceWith(html)
+
+  appendBuild = (build) ->
+    html = template(build: build)
+    $("ul.builds").append(html)
+
+  prependBuild = (build) ->
+    html = template(build: build)
+    $("ul.builds").append(html)
+
+  Handlebars.registerHelper 'buildHtmlClass', (build) ->
+    switch build.aasm_state
+      when 'completed'
+        if build.success
+          if build.recovered
+            'recovered'
+          else
+            'success'
+        else
+          'failed'
+      when 'failed' then 'error'
+      else build.aasm_state
+
+  Handlebars.registerHelper 'buildStateTag', (build) ->
+    switch build.aasm_state
+      when 'running'
+        "<span class='label label-info'>STOPPED</span>"
+      when 'completed'
+        if build.success
+          if build.recovered
+            "<span class='label label-primary'>RECOVERED</span>"
+          else
+            "<span class='label label-success'>SUCCESS</span>"
+        else
+          "<span class='label label-danger'>FAILED</span>"
+      when 'pending'
+        "<span class='label label-warning'>PENDING</span>"
+      when 'failed'
+        "<span class='label label-default'>ERROR</span>"
+      when 'stopped'
+        "<span class='label label-default'>STOPPED</span>"
+
+  Handlebars.registerHelper 'buildDuration', (build) ->
+    switch build.aasm_state
+     when 'pending' then 'Pending'
+     when 'running' then 'Running'
+     when 'completed' then "Completed in #{build.duration_to_words}"
+     when 'failed' then 'Error found when build'
+
+  Handlebars.registerHelper 'buildTimeAgo', (build) ->
+    if build.finished_at
+      build.finished_at
+    else
+      'Not finished yet'
+
+  Handlebars.registerHelper 'buildActionLink', (build) ->
+    if build.running
+      "<a class='rebuild-btn' data-toggle='tooltip' data-placement='top' title='' data-remote='true' rel='nofollow' data-method='put' href='/projects/#{build.project_id}/builds/#{build.id}/stop' data-original-title='Stop Build'><i class='glyphicon glyphicon-remove'></i></a>"
+    else
+      "<a class='rebuild-btn' data-toggle='tooltip' data-placement='top' title='' data-remote='true' rel='nofollow' data-method='put' href='/projects/#{build.project_id}/builds/#{build.id}/rebuild' data-original-title='Restart Build'><i class='glyphicon glyphicon-refresh'></i></a>"
+   
+  Handlebars.registerHelper 'projectIcon', (project) ->
+    switch project.type
+      when 'GithubProject'
+        "<img src=<%= asset_path 'github-24-black.png' %> class='project-icon' />"
+      when 'BitbucketProject'
+        "<img src=<%= asset_path 'bitbucket-24-black.png' %> class='project-icon' />"
+
+  Handlebars.registerHelper 'authorAvatarUrl', (build) ->
+    gravatar build.author_email
+
+  Handlebars.registerHelper 'buildTimeAgo', (build) ->
+    if build.finished_at
+      moment(build.finished_at).fromNow()
+    else
+      'Not finished yet'
+
+  Handlebars.registerHelper 'buildProjectCommitUrl', (build) ->
+    href = switch build.project.type
+             when 'GithubProject'
+               "https://github.com/#{build.project.name}/commit/#{build.last_commit_id}"
+             when 'BitbucketProject'
+               "https://bitbucket.org/#{build.project.name}/commits/#{build.last_commit_id}"
+
+    "<a target='_blank' href=#{href}>#{build.last_commit_id[0..7]}</a>"
+
+  if builds
+    appendBuild build for build in builds

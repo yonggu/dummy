@@ -1,0 +1,5 @@
+.project-header.row
+  = link_to @project.name, project_path(@project), class: 'pull-left'
+  .settings.pull-right
+    i.glyphicon.glyphicon-cog
+    = link_to 'Project Settings', edit_project_path(@project)

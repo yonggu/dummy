@@ -1,0 +1,13 @@
+= render 'header'
+
+- if @builds.present?
+  = render 'projects/builds', builds: @builds
+- else
+  .no-builds.form-horizontal
+    h3 Push to your repository to trigger your first build
+    h5 You can add AwesomeCode badge to your README (or anywhere else):
+
+    = render partial: 'status_images'
+
+javascript:
+  var projectIds = [#{@project.id}];
