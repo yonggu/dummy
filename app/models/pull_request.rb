@@ -65,7 +65,7 @@ class PullRequest < ActiveRecord::Base
     git_checkout build.repository_path, commit_id: build.last_commit_id, base_branch: build.branch, source_branch: source_branch
     RubocopAnalyzer.new(build.repository_path, build_item.analysis_config.cop_class, build_item.projects_analysis_config.full_config).run
     output = git_push build.repository_path, commit_id: build.last_commit_id, base_branch: build.branch, source_branch: source_branch,
-                                    commit_message: commit_message
+                                             commit_message: commit_message
     if output[:success]
       build.project.send_pull_request(self)
     else
