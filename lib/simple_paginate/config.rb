@@ -5,8 +5,8 @@ module SimplePaginate
     yield @config ||= SimplePaginate::Configuration.new
   end
 
-  def self.config
-    @config
+  class << self
+    attr_reader :config
   end
 
   class Configuration
